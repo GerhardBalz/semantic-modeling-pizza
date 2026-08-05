@@ -1,0 +1,62 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+smp:PizzaOntologyDescriptionShape
+    a sh:NodeShape ;
+    sh:targetNode <http://www.co-ode.org/ontologies/pizza> ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:message "The Pizza Ontology model description must have a title."@en
+    ] ;
+    sh:property [
+        sh:path smo:hasModelKind ;
+        sh:minCount 1 ;
+        sh:hasValue smo:OntologyModelKind ;
+        sh:message "The Pizza Ontology must be classified as an ontology model."@en
+    ] ;
+    sh:property [
+        sh:path smo:usesLanguage ;
+        sh:minCount 1 ;
+        sh:message "The Pizza Ontology model description must declare at least one modeling language."@en
+    ] ;
+    sh:property [
+        sh:path smo:hasRepresentation ;
+        sh:minCount 1 ;
+        sh:message "The Pizza Ontology model description must identify a representation."@en
+    ] .
+
+smp:PizzaMenuSemanticModelShape
+    a sh:NodeShape, smo:Constraint ;
+    sh:targetNode smp:PizzaMenuSemanticModel ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:message "The Pizza Menu Semantic Model must have a title."@en
+    ] ;
+    sh:property [
+        sh:path smo:hasModelKind ;
+        sh:minCount 1 ;
+        sh:hasValue smo:SemanticModelKind ;
+        sh:message "The Pizza Menu Semantic Model must be classified as a semantic model."@en
+    ] ;
+    sh:property [
+        sh:path smo:isProjectionOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:hasValue <http://www.co-ode.org/ontologies/pizza> ;
+        sh:message "The Pizza Menu Semantic Model must identify the Pizza Ontology as its single source projection."@en
+    ] ;
+    sh:property [
+        sh:path smo:usesLanguage ;
+        sh:minCount 1 ;
+        sh:message "The Pizza Menu Semantic Model must declare at least one modeling language."@en
+    ] ;
+    sh:property [
+        sh:path smo:hasConstraint ;
+        sh:minCount 1 ;
+        sh:hasValue smp:PizzaMenuSemanticModelShape ;
+        sh:message "The Pizza Menu Semantic Model must identify its SHACL constraint."@en
+    ] .
