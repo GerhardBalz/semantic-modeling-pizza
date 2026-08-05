@@ -1,0 +1,37 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+smp:MenuItemShape
+    a sh:NodeShape ;
+    sh:targetClass smp:MenuItem ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A menu item must have one title."@en
+    ] ;
+    sh:property [
+        sh:path smp:offersPizza ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class pizza:Pizza ;
+        sh:message "A menu item must offer exactly one resource typed as a pizza."@en
+    ] ;
+    sh:property [
+        sh:path smp:price ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+        sh:message "A menu item must have one non-negative decimal price."@en
+    ] ;
+    sh:property [
+        sh:path smp:available ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:message "A menu item must have one boolean availability value."@en
+    ] .
