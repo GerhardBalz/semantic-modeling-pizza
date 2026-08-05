@@ -2,24 +2,44 @@
 @prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
 @prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 smp:PizzaMenuSemanticModel
     a smo:Model ;
     dcterms:title "Pizza Menu Semantic Model"@en ;
-    dcterms:description "An exploratory, menu-oriented semantic projection of selected concepts from the Protégé Pizza Ontology."@en ;
+    dcterms:description "A menu-oriented semantic projection for representing offered pizzas and supporting explainable recommendations."@en ;
     smo:hasModelKind smo:SemanticModelKind ;
     smo:usesLanguage smo:RDF, smo:OWL, smo:SHACL ;
     smo:isProjectionOf <http://www.co-ode.org/ontologies/pizza> ;
-    smo:hasConstraint smp:PizzaMenuSemanticModelShape ;
+    smo:hasConstraint smp:PizzaMenuSemanticModelShape, smp:MenuItemShape ;
     smo:hasRepresentation smp:PizzaMenuSemanticModelTurtle ;
+    smp:answersQuestion
+        "Which pizzas are currently offered on the menu?"@en,
+        "Which toppings are associated with a pizza?"@en,
+        "Which offered pizzas satisfy a dietary or spiciness preference?"@en,
+        "What evidence supports a recommendation?"@en ;
+    smp:excludesElement pizza:Country, pizza:IceCream ;
     smo:containsElement
         pizza:Pizza,
         pizza:NamedPizza,
+        pizza:Margherita,
+        pizza:VegetarianPizza,
+        pizza:SpicyPizza,
         pizza:PizzaBase,
         pizza:PizzaTopping,
+        pizza:SpicyTopping,
+        pizza:Spiciness,
         pizza:hasBase,
         pizza:hasTopping,
-        pizza:hasSpiciness .
+        pizza:hasSpiciness,
+        smp:MenuItem,
+        smp:offersPizza,
+        smp:price,
+        smp:available,
+        smp:DietaryPreference,
+        smp:RecommendationEvidence .
 
 smp:PizzaMenuSemanticModelTurtle
     a smo:ModelRepresentation ;
@@ -30,3 +50,54 @@ smp:PizzaMenuSemanticModelTurtle
 smp:PizzaMenuSemanticModelShape
     a smo:Constraint ;
     dcterms:title "Pizza Menu Semantic Model shape"@en .
+
+smp:MenuItemShape
+    a smo:Constraint ;
+    dcterms:title "Pizza menu item shape"@en .
+
+smp:answersQuestion
+    a owl:AnnotationProperty ;
+    rdfs:label "answers question"@en ;
+    rdfs:comment "Links a model to a competency question it is intended to answer. Experimental local property."@en .
+
+smp:excludesElement
+    a owl:ObjectProperty ;
+    rdfs:domain smo:Model ;
+    rdfs:range smo:ModelElement ;
+    rdfs:label "excludes element"@en ;
+    rdfs:comment "Identifies a source-model element intentionally excluded from a projection. Experimental local property."@en .
+
+smp:MenuItem
+    a owl:Class, smo:ModelElement ;
+    rdfs:label "Menu item"@en .
+
+smp:offersPizza
+    a owl:ObjectProperty, smo:ModelElement ;
+    rdfs:domain smp:MenuItem ;
+    rdfs:range pizza:Pizza ;
+    rdfs:label "offers pizza"@en .
+
+smp:price
+    a owl:DatatypeProperty, smo:ModelElement ;
+    rdfs:domain smp:MenuItem ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "price"@en .
+
+smp:available
+    a owl:DatatypeProperty, smo:ModelElement ;
+    rdfs:domain smp:MenuItem ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "available"@en .
+
+smp:DietaryPreference
+    a owl:Class, smo:ModelElement ;
+    rdfs:label "Dietary preference"@en .
+
+smp:RecommendationEvidence
+    a owl:Class, smo:ModelElement ;
+    rdfs:label "Recommendation evidence"@en .
+
+smp:RestaurantMenuContext
+    a smo:RuntimeContext ;
+    dcterms:title "Restaurant menu context"@en ;
+    dcterms:description "The runtime context in which currently available menu items are searched and recommended."@en .
