@@ -1,0 +1,42 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
+@prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<http://www.co-ode.org/ontologies/pizza>
+    a owl:Ontology, smo:Model ;
+    dcterms:title "Protégé Pizza Ontology"@en ;
+    dcterms:description "An ontology about pizzas and their toppings, used by the Protégé and Manchester OWL tutorials."@en ;
+    dcterms:source <https://protege.stanford.edu/ontologies/pizza/pizza.owl> ;
+    dcterms:hasVersion <http://www.co-ode.org/ontologies/pizza/2.0.0> ;
+    dcterms:license <https://creativecommons.org/licenses/by/3.0/> ;
+    smo:hasModelKind smo:OntologyModelKind ;
+    smo:usesLanguage smo:RDF, smo:RDFS, smo:OWL, smo:SKOS ;
+    smo:hasRepresentation smp:CanonicalPizzaOntologyDocument ;
+    smo:containsElement
+        pizza:Food,
+        pizza:Pizza,
+        pizza:PizzaBase,
+        pizza:PizzaTopping,
+        pizza:NamedPizza,
+        pizza:hasIngredient,
+        pizza:hasBase,
+        pizza:hasTopping,
+        pizza:hasSpiciness .
+
+smp:CanonicalPizzaOntologyDocument
+    a smo:ModelRepresentation ;
+    dcterms:title "Canonical Pizza Ontology RDF/XML document"@en ;
+    dcterms:identifier "https://protege.stanford.edu/ontologies/pizza/pizza.owl" ;
+    dcterms:format "application/rdf+xml" .
+
+pizza:Food a smo:ModelElement .
+pizza:Pizza a smo:ModelElement .
+pizza:PizzaBase a smo:ModelElement .
+pizza:PizzaTopping a smo:ModelElement .
+pizza:NamedPizza a smo:ModelElement .
+pizza:hasIngredient a smo:ModelElement .
+pizza:hasBase a smo:ModelElement .
+pizza:hasTopping a smo:ModelElement .
+pizza:hasSpiciness a smo:ModelElement .

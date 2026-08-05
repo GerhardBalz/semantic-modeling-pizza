@@ -1,0 +1,32 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
+@prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+smp:PizzaMenuSemanticModel
+    a smo:Model ;
+    dcterms:title "Pizza Menu Semantic Model"@en ;
+    dcterms:description "An exploratory, menu-oriented semantic projection of selected concepts from the Protégé Pizza Ontology."@en ;
+    smo:hasModelKind smo:SemanticModelKind ;
+    smo:usesLanguage smo:RDF, smo:OWL, smo:SHACL ;
+    smo:isProjectionOf <http://www.co-ode.org/ontologies/pizza> ;
+    smo:hasConstraint smp:PizzaMenuSemanticModelShape ;
+    smo:hasRepresentation smp:PizzaMenuSemanticModelTurtle ;
+    smo:containsElement
+        pizza:Pizza,
+        pizza:NamedPizza,
+        pizza:PizzaBase,
+        pizza:PizzaTopping,
+        pizza:hasBase,
+        pizza:hasTopping,
+        pizza:hasSpiciness .
+
+smp:PizzaMenuSemanticModelTurtle
+    a smo:ModelRepresentation ;
+    dcterms:title "Pizza Menu Semantic Model — Turtle representation"@en ;
+    dcterms:identifier "examples/pizza-menu-semantic-model.ttl" ;
+    dcterms:format "text/turtle" .
+
+smp:PizzaMenuSemanticModelShape
+    a smo:Constraint ;
+    dcterms:title "Pizza Menu Semantic Model shape"@en .

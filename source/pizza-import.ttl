@@ -1,0 +1,10 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<https://github.com/GerhardBalz/semantic-modeling-pizza/source/pizza-import>
+    a owl:Ontology ;
+    dcterms:title "Protégé Pizza Ontology import"@en ;
+    dcterms:description "Local import document referencing the canonical Protégé Pizza Ontology without changing its ontology identity."@en ;
+    dcterms:source <https://protege.stanford.edu/ontologies/pizza/pizza.owl> ;
+    dcterms:license <https://creativecommons.org/licenses/by/3.0/> ;
+    owl:imports <http://www.co-ode.org/ontologies/pizza> .
