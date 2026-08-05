@@ -2,11 +2,11 @@
 
 ## 1. Purpose
 
-This repository explores how the Semantic Modeling Ontology (SMO) can describe an established external ontology and connect it to derived semantic models, constraints, and later operational artifacts.
+This repository explores how the Semantic Modeling Ontology (SMO) can describe an established external ontology and connect it to a purpose-specific semantic model, runtime data, constraints, inference, queries, and an operational agent contract.
 
 The Pizza Ontology is used because it is small, familiar, and expressive enough to demonstrate classes, object properties, restrictions, value partitions, disjointness, individuals, labels, and inference.
 
-The project is not intended to replace, fork, or improve the Pizza Ontology itself. It uses the ontology as an external semantic foundation and investigates the additional model-management relationships that SMO can express around it.
+The project does not replace, fork, or improve the Pizza Ontology itself. It uses the ontology as an external semantic foundation and investigates the model-management relationships that SMO can express around it.
 
 ## 2. Source ontology
 
@@ -26,9 +26,9 @@ Its embedded metadata identifies version 2.0 and the Creative Commons Attributio
 
 The repository references the canonical ontology through [`source/pizza-import.ttl`](../source/pizza-import.ttl) rather than copying or modifying it.
 
-## 3. Core experiment
+## 3. Experiment architecture
 
-The first experiment separates four layers:
+The experiment separates six layers:
 
 ```text
 External ontology
@@ -40,8 +40,14 @@ Model description
 Derived semantic model
     Pizza Menu Semantic Model as a purpose-specific projection
 
-Validation
-    SHACL shapes for the model descriptions
+Runtime data
+    Concrete menu items, pizza instances, prices, and availability
+
+Operational artifact
+    find_suitable_pizzas Agent Contract
+
+Verification
+    SHACL validation, OWL inference, and SPARQL lineage queries
 ```
 
 Conceptually:
@@ -52,17 +58,15 @@ Protégé Pizza Ontology
 Semantic Modeling Ontology
         ↓ projected as
 Pizza Menu Semantic Model
-        ↓ constrained by
-Pizza model SHACL shapes
-        ↓ later operationalized as
-APIs / UI / Rules / Agent Contracts
+        ↓ applied to
+Example menu data
+        ↓ operationalized as
+find_suitable_pizzas Agent Contract
 ```
 
-The derived semantic model is not asserted to be part of the original Pizza Ontology. It is a repository-specific exploration of how a concrete model may select and organize Pizza semantics for a particular purpose.
+The derived model, runtime facts, and agent contract are repository-specific artifacts. They are not asserted to be part of the original Pizza Ontology.
 
 ## 4. Modeling levels
-
-The Pizza example illustrates the modeling levels used by SMO:
 
 ```text
 M3 — Semantic modeling foundations
@@ -72,158 +76,272 @@ M2 — Semantic Modeling Ontology
      Model, Model Element, Model Kind, Projection,
      Constraint, Mapping, Artifact, Runtime Context
 
-M1 — Concrete models
+M1 — Concrete models and contracts
      Pizza Ontology,
-     Pizza Menu Semantic Model
+     Pizza Menu Semantic Model,
+     find_suitable_pizzas Agent Contract
 
 M0 — Runtime entities and facts
-     A particular pizza, topping, menu item, or order
+     Menu Item 4711,
+     a particular Margherita pizza,
+     its price and current availability
 ```
 
-The Pizza Ontology belongs to M1 because it is a concrete ontology expressed using OWL. Its classes such as `Pizza` and `PizzaTopping` are model elements. Particular runtime pizzas or orders would belong to M0.
+The Pizza Ontology belongs to M1 because it is a concrete ontology expressed using OWL. Its classes such as `Pizza` and `PizzaTopping` are model elements. The menu items and pizza instances in [`data/example-menu.ttl`](../data/example-menu.ttl) belong to M0.
 
 ## 5. Artifact responsibilities
 
 ### `source/pizza-import.ttl`
 
-Provides a small local import document that points to the canonical Pizza Ontology and records its source and license.
-
-It preserves the original ontology identity and avoids silently maintaining a copied source file.
+Points to the canonical Pizza Ontology and records its source and license without creating a replacement ontology identity.
 
 ### `models/pizza-model-description.ttl`
 
-Uses SMO to describe the Pizza Ontology as a model, including:
-
-- model kind;
-- modeling languages;
-- representation;
-- source and version information;
-- selected model elements relevant to the exploration.
-
-This file describes the ontology. It does not redefine Pizza domain semantics.
+Uses SMO to describe the external Pizza Ontology as a model, including its kind, languages, representation, source, version, and selected model elements.
 
 ### `examples/pizza-menu-semantic-model.ttl`
 
-Declares a purpose-specific semantic model derived from the Pizza Ontology.
+Defines the purpose and scope of the Pizza Menu Semantic Model. It identifies selected source concepts, explicitly excluded source concepts, local menu concepts, and the competency questions the model is intended to answer.
 
-The initial example is deliberately small. Its main purpose is to exercise SMO relationships such as `isProjectionOf`, `hasConstraint`, `usesLanguage`, and `hasRepresentation`.
+### `data/example-menu.ttl`
 
-### `shapes/pizza-model-shapes.ttl`
+Contains concrete runtime facts. It deliberately remains separate from ontology classes and semantic-model metadata.
 
-Defines SHACL constraints for the model descriptions in this repository.
+### `contracts/find-suitable-pizzas.ttl`
 
-The shapes validate metadata and derivation relationships, not all logical axioms of the Pizza Ontology.
+Describes a read-only agent contract derived from the Pizza Menu Semantic Model. It identifies the operation name, semantic input and output concepts, runtime context, representation, and source model.
 
-## 6. Initial competency questions
+### `shapes/*.ttl`
 
-The repository should make it possible to answer:
+Separates model-metadata constraints from runtime menu-data constraints.
 
-1. What is the external source ontology?
-2. What is its ontology IRI and version?
-3. Which model kind is assigned to it?
-4. Which modeling languages does it use?
-5. Which local artifact represents or imports it?
-6. Which semantic models are derived from it?
-7. Is a derived model a projection, specialization, or realization?
-8. Which SHACL constraints apply to each model?
-9. Which model elements from the source ontology are relevant to a projection?
-10. Can the complete derivation chain be queried without confusing source semantics and repository-specific artifacts?
+### `queries/trace-agent-lineage.rq`
 
-## 7. Initial model description
+Traces the direct derivation edges from the agent contract through the semantic model to the source ontology.
 
-The Pizza Ontology is described conceptually as:
+### `tests/test_semantic_models.py`
+
+Executes syntax, SHACL, OWL-inference, and SPARQL-lineage tests.
+
+## 6. Projection scope
+
+The Pizza Menu Semantic Model is a task-oriented projection rather than a copy of the complete Pizza Ontology.
+
+Its competency questions are:
+
+1. Which pizzas are currently offered on the menu?
+2. Which toppings are associated with a pizza?
+3. Which offered pizzas satisfy a dietary or spiciness preference?
+4. What evidence supports a recommendation?
+
+The projection selects concepts needed for menu representation and recommendation, including:
 
 ```text
-Pizza Ontology
-    kind: Ontology Model
-    languages: RDF, RDFS, OWL, SKOS
-    representation: canonical RDF/XML document
-    source: Protégé Pizza ontology document
-    version: 2.0
+Pizza
+NamedPizza
+Margherita
+VegetarianPizza
+SpicyPizza
+PizzaBase
+PizzaTopping
+SpicyTopping
+Spiciness
+hasBase
+hasTopping
+hasSpiciness
 ```
 
-The first derived model is described as:
+It explicitly excludes teaching-oriented or out-of-scope concepts such as:
 
 ```text
+Country
+IceCream
+```
+
+The local properties `smp:answersQuestion` and `smp:excludesElement` are experimental. They make the projection boundary explicit while testing whether equivalent concepts belong in SMO itself.
+
+## 7. Runtime data boundary
+
+The semantic model defines reusable meaning. Runtime data records what currently exists.
+
+```text
+Pizza Ontology class
+    pizza:Margherita
+
+Runtime pizza instance
+    smp:MargheritaPizza
+
+Runtime menu item
+    smp:MenuItem4711
+
+Runtime facts
+    title, price, availability
+```
+
+The runtime menu data may change without changing the enduring source ontology or the purpose of the semantic model.
+
+## 8. SHACL validation
+
+Two shape graphs are used:
+
+- `pizza-model-shapes.ttl` validates model descriptions, projection metadata, and the agent contract;
+- `pizza-menu-data-shapes.ttl` validates concrete menu items.
+
+Positive tests confirm that the current artifacts conform. Negative fixtures demonstrate that:
+
+- a semantic projection without its source model fails;
+- a menu item without a price fails.
+
+SHACL validates declared graph structure. It does not replace OWL reasoning or ontology-consistency checking.
+
+## 9. OWL inference
+
+The example menu contains `smp:DiavolaPizza`, asserted as a `pizza:Pizza`, with a topping asserted as a `pizza:SpicyTopping`.
+
+The canonical ontology defines `pizza:SpicyPizza` as any pizza with at least one spicy topping. The test suite loads the canonical ontology, applies OWL RL reasoning, and verifies that this additional type is inferred:
+
+```text
+Asserted:
+    DiavolaPizza a Pizza
+    DiavolaPizza hasTopping ChilliTopping
+    ChilliTopping a SpicyTopping
+
+Inferred:
+    DiavolaPizza a SpicyPizza
+```
+
+This keeps three concerns distinct:
+
+```text
+Assertions       what the data explicitly states
+OWL inference    what follows from ontology semantics
+SHACL validation whether the graph satisfies expected constraints
+```
+
+## 10. Agent contract
+
+The first operational artifact is a read-only contract named:
+
+```text
+find_suitable_pizzas
+```
+
+It is derived from the Pizza Menu Semantic Model and applies in the restaurant-menu runtime context.
+
+Semantic inputs include:
+
+- dietary preference;
+- spiciness;
+- required or excluded toppings.
+
+Semantic outputs include:
+
+- matching pizzas;
+- recommendation evidence.
+
+The contract describes meaning and lineage. It does not yet prescribe a particular MCP, OpenAPI, or implementation schema.
+
+## 11. Traceability
+
+The lineage query should return these direct edges:
+
+```text
+find_suitable_pizzas Agent Contract
+    smo:isGeneratedFrom
 Pizza Menu Semantic Model
-    kind: Semantic Model
-    source: Pizza Ontology
-    relationship: projection
-    languages: RDF, OWL, SHACL
-    purpose: explore menu-oriented Pizza semantics
+
+Pizza Menu Semantic Model
+    smo:isProjectionOf
+Protégé Pizza Ontology
 ```
 
-## 8. Validation scope
+This proves that an operational artifact can be traced back to its semantic foundation without treating the artifacts as identical.
 
-Initial SHACL validation checks that:
+## 12. SMO findings
 
-- the Pizza Ontology description has a title, model kind, language, and representation;
-- the Pizza Menu Semantic Model identifies the source model it projects;
-- the projection declares at least one modeling language;
-- the projection identifies its applicable constraint model.
+The current SMO vocabulary already supports:
 
-OWL reasoning and ontology consistency are separate concerns. They should eventually be validated with an OWL reasoner rather than conflated with SHACL model-metadata validation.
+- identifying models and model kinds;
+- declaring modeling languages and representations;
+- relating a projection to its source model;
+- associating constraints;
+- relating an operational artifact to its source model;
+- applying an artifact in a runtime context.
 
-## 9. Design principles
+The Pizza experiment exposes candidate gaps:
+
+1. **Projection scope** — `smo:containsElement` identifies included elements, but SMO has no explicit concept for excluded elements.
+2. **Competency questions** — SMO has no dedicated relationship connecting a model to the questions it is intended to answer.
+3. **Operational signatures** — SMO does not yet define operation names or semantic input and output concepts for contracts.
+4. **Evidence semantics** — recommendation evidence is represented only as a local concept; its provenance and explanation structure remain open.
+
+The repository uses local `smp:` properties for these needs. They remain experimental until a second domain demonstrates that they are reusable.
+
+## 13. Design principles
 
 ### Preserve external identity
 
-The canonical Pizza Ontology keeps its original ontology IRI. The repository does not mint a replacement identity for it.
+The canonical Pizza Ontology keeps its original ontology IRI.
 
 ### Describe rather than duplicate
 
-SMO statements describe the ontology and its role in a modeling lifecycle without reproducing its complete OWL metamodel.
+SMO statements describe the ontology and its role without reproducing its complete OWL metamodel.
 
-### Separate source from projection
+### Separate source, projection, and runtime facts
 
-The Pizza Ontology and Pizza Menu Semantic Model are distinct models. The latter must retain an explicit derivation link to the former.
+The external ontology, purpose-specific semantic model, and current menu data are distinct artifacts with different lifecycles.
 
-### Add concepts through evidence
+### Demonstrate before generalizing
 
-SMO should be extended only when the Pizza exploration reveals a concrete requirement that the current vocabulary cannot express clearly.
+Local vocabulary is preferred over changing SMO until a requirement proves reusable across more than one example.
 
-### Keep operationalization provisional
+### Keep validation and inference distinct
 
-APIs, UI models, recommendation rules, and agent contracts are future artifacts. They should not be introduced until the semantic projection and validation approach is understood.
+SHACL constraints and OWL semantics answer different questions and are tested separately.
 
-## 10. Repository structure
+### Preserve lineage
+
+Operational artifacts must retain machine-readable links to their source semantic models and ontologies.
+
+## 14. Repository structure
 
 ```text
 .
+├── .github/workflows/validate.yml
 ├── README.md
 ├── CONTRIBUTING.md
 ├── LICENSE
 ├── NOTICE.md
-├── docs/
-│   └── architecture.md
+├── requirements-dev.txt
+├── docs/architecture.md
 ├── source/
-│   ├── README.md
-│   └── pizza-import.ttl
 ├── models/
-│   └── pizza-model-description.ttl
+├── examples/
+├── data/
+├── contracts/
 ├── shapes/
-│   └── pizza-model-shapes.ttl
-└── examples/
-    └── pizza-menu-semantic-model.ttl
+├── queries/
+└── tests/
 ```
 
-## 11. Initial milestone
+## 15. Milestone v0.2
 
-The first milestone is complete when:
+The milestone is complete when:
 
-1. the canonical Pizza Ontology is referenced with attribution;
-2. SMO describes it as an ontology model;
-3. one derived Pizza semantic model is declared as a projection;
-4. SHACL validates both model descriptions;
-5. the repository clearly separates external ontology semantics from its own exploratory models;
-6. gaps discovered in SMO are recorded before the vocabulary is expanded.
+1. the projection states its purpose, included concepts, excluded concepts, and competency questions;
+2. concrete menu data is separate from model definitions;
+3. valid and invalid SHACL examples are executable;
+4. at least one OWL inference is demonstrated against the canonical ontology;
+5. one agent contract is derived from the semantic model;
+6. a SPARQL query traces the complete derivation chain;
+7. SMO gaps discovered by the experiment are documented without prematurely changing SMO.
 
-## 12. Open questions
+## 16. Open questions
 
-1. Should an external ontology document be modeled only as a `ModelRepresentation`, or also as a general `Artifact` with provenance?
-2. How should the source ontology version be linked to an immutable retrieved representation?
-3. Should selected Pizza classes be listed as SMO model elements, or should membership be derived from named-graph or ontology boundaries?
-4. What precisely distinguishes the Pizza Menu Semantic Model from a semantic view?
-5. Should a purpose-specific projection import the complete Pizza Ontology or copy only selected axioms into a new ontology?
-6. Which validations belong in SHACL and which belong in OWL reasoning tests?
-7. What operational artifact would provide the clearest next test: menu API, recommendation rules, or an agent contract?
+1. Should `answersQuestion` and `excludesElement` become reusable SMO concepts?
+2. Is the Pizza Menu Semantic Model better classified as a semantic model, semantic view, or both?
+3. Should a purpose-specific projection import the complete source ontology or materialize only selected axioms?
+4. How should immutable retrieved source representations be recorded for reproducible inference tests?
+5. Should agent inputs and outputs be model elements, contract parameters, or projections of domain concepts?
+6. How should recommendation evidence and provenance be modeled?
+7. Which next example best challenges the emerging pattern: Wine and Food, FIBO, or another non-food ontology?

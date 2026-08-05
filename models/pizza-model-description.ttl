@@ -20,6 +20,15 @@
         pizza:PizzaBase,
         pizza:PizzaTopping,
         pizza:NamedPizza,
+        pizza:Margherita,
+        pizza:VegetarianPizza,
+        pizza:SpicyPizza,
+        pizza:SpicyTopping,
+        pizza:Spiciness,
+        pizza:MozzarellaTopping,
+        pizza:TomatoTopping,
+        pizza:Country,
+        pizza:IceCream,
         pizza:hasIngredient,
         pizza:hasBase,
         pizza:hasTopping,
@@ -36,6 +45,15 @@ pizza:Pizza a smo:ModelElement .
 pizza:PizzaBase a smo:ModelElement .
 pizza:PizzaTopping a smo:ModelElement .
 pizza:NamedPizza a smo:ModelElement .
+pizza:Margherita a smo:ModelElement .
+pizza:VegetarianPizza a smo:ModelElement .
+pizza:SpicyPizza a smo:ModelElement .
+pizza:SpicyTopping a smo:ModelElement .
+pizza:Spiciness a smo:ModelElement .
+pizza:MozzarellaTopping a smo:ModelElement .
+pizza:TomatoTopping a smo:ModelElement .
+pizza:Country a smo:ModelElement .
+pizza:IceCream a smo:ModelElement .
 pizza:hasIngredient a smo:ModelElement .
 pizza:hasBase a smo:ModelElement .
 pizza:hasTopping a smo:ModelElement .

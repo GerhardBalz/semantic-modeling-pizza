@@ -1,0 +1,32 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+smp:MenuItem4711
+    a smp:MenuItem ;
+    dcterms:title "Margherita"@en ;
+    smp:offersPizza smp:MargheritaPizza ;
+    smp:price "16.50"^^xsd:decimal ;
+    smp:available true .
+
+smp:MargheritaPizza
+    a pizza:Pizza, pizza:Margherita .
+
+smp:MenuItem4712
+    a smp:MenuItem ;
+    dcterms:title "Diavola"@en ;
+    smp:offersPizza smp:DiavolaPizza ;
+    smp:price "19.50"^^xsd:decimal ;
+    smp:available true .
+
+smp:DiavolaPizza
+    a pizza:Pizza ;
+    pizza:hasTopping
+        smp:ChilliTopping,
+        smp:MozzarellaTopping,
+        smp:TomatoTopping .
+
+smp:ChilliTopping a pizza:SpicyTopping .
+smp:MozzarellaTopping a pizza:MozzarellaTopping .
+smp:TomatoTopping a pizza:TomatoTopping .

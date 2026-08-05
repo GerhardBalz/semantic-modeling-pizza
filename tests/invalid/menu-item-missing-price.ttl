@@ -1,0 +1,11 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+smp:BrokenMenuItem
+    a smp:MenuItem ;
+    dcterms:title "Pizza without price"@en ;
+    smp:offersPizza smp:BrokenPizza ;
+    smp:available true .
+
+smp:BrokenPizza a pizza:Pizza .
