@@ -1,0 +1,18 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+smp:PizzaMenuSemanticModel
+    a smo:Model ;
+    dcterms:title "Broken Pizza Menu Semantic Model"@en ;
+    dcterms:description "A deliberately invalid projection without a source model."@en ;
+    smo:hasModelKind smo:SemanticModelKind ;
+    smo:usesLanguage smo:RDF ;
+    smo:hasConstraint smp:PizzaMenuSemanticModelShape ;
+    smo:hasRepresentation smp:BrokenRepresentation ;
+    smo:containsElement smp:MenuItem ;
+    smp:answersQuestion
+        "Question one?"@en,
+        "Question two?"@en,
+        "Question three?"@en ;
+    smp:excludesElement smp:ExcludedElement .
