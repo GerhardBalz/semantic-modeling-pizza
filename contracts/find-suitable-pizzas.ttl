@@ -1,0 +1,54 @@
+@prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
+@prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
+@prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+smp:FindSuitablePizzasContract
+    a smo:AgentContract, smo:Model, smo:Artifact ;
+    dcterms:title "Find suitable pizzas agent contract"@en ;
+    dcterms:description "A read-only semantic contract for finding offered pizzas that match dietary, spiciness, and topping preferences and returning supporting evidence."@en ;
+    smo:hasModelKind smo:AgentContractModelKind ;
+    smo:usesLanguage smo:RDF ;
+    smo:isGeneratedFrom smp:PizzaMenuSemanticModel ;
+    smo:hasConstraint smp:FindSuitablePizzasContractShape ;
+    smo:hasRepresentation smp:FindSuitablePizzasContractTurtle ;
+    smo:appliesInContext smp:RestaurantMenuContext ;
+    smp:operationName "find_suitable_pizzas" ;
+    smp:inputConcept
+        smp:DietaryPreference,
+        pizza:Spiciness,
+        pizza:PizzaTopping ;
+    smp:outputConcept
+        pizza:Pizza,
+        smp:RecommendationEvidence ;
+    smo:containsElement
+        smp:operationName,
+        smp:inputConcept,
+        smp:outputConcept .
+
+smp:FindSuitablePizzasContractTurtle
+    a smo:ModelRepresentation ;
+    dcterms:title "Find suitable pizzas contract — Turtle representation"@en ;
+    dcterms:identifier "contracts/find-suitable-pizzas.ttl" ;
+    dcterms:format "text/turtle" .
+
+smp:operationName
+    a owl:DatatypeProperty, smo:ModelElement ;
+    rdfs:range xsd:string ;
+    rdfs:label "operation name"@en ;
+    rdfs:comment "Identifies the implementation-neutral operation name of a contract. Experimental local property."@en .
+
+smp:inputConcept
+    a owl:ObjectProperty, smo:ModelElement ;
+    rdfs:range smo:ModelElement ;
+    rdfs:label "input concept"@en ;
+    rdfs:comment "Identifies a semantic concept accepted as input by a contract. Experimental local property."@en .
+
+smp:outputConcept
+    a owl:ObjectProperty, smo:ModelElement ;
+    rdfs:range smo:ModelElement ;
+    rdfs:label "output concept"@en ;
+    rdfs:comment "Identifies a semantic concept returned by a contract. Experimental local property."@en .
