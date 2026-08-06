@@ -3,6 +3,7 @@
 @prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
 
 <http://www.co-ode.org/ontologies/pizza>
     a owl:Ontology, smo:Model ;
@@ -13,7 +14,9 @@
     dcterms:license <https://creativecommons.org/licenses/by/3.0/> ;
     smo:hasModelKind smo:OntologyModelKind ;
     smo:usesLanguage smo:RDF, smo:RDFS, smo:OWL, smo:SKOS ;
-    smo:hasRepresentation smp:CanonicalPizzaOntologyDocument ;
+    smo:hasRepresentation
+        smp:CanonicalPizzaOntologyDocument,
+        smp:CachedPizzaOntologyDocument ;
     smo:containsElement
         pizza:Food,
         pizza:Pizza,
@@ -39,6 +42,21 @@ smp:CanonicalPizzaOntologyDocument
     dcterms:title "Canonical Pizza Ontology RDF/XML document"@en ;
     dcterms:identifier "https://protege.stanford.edu/ontologies/pizza/pizza.owl" ;
     dcterms:format "application/rdf+xml" .
+
+smp:CachedPizzaOntologyDocument
+    a smo:ModelRepresentation ;
+    dcterms:title "Cached Pizza Ontology RDF/XML document"@en ;
+    dcterms:description "A byte-for-byte cached representation used for reproducible validation and inference without changing the ontology identity."@en ;
+    dcterms:identifier "source/cache/pizza.owl" ;
+    dcterms:format "application/rdf+xml" ;
+    dcterms:relation smp:PizzaCacheManifest ;
+    prov:specializationOf smp:CanonicalPizzaOntologyDocument .
+
+smp:PizzaCacheManifest
+    a smo:Artifact ;
+    dcterms:title "Pizza ontology cache manifest"@en ;
+    dcterms:identifier "source/cache/pizza-manifest.json" ;
+    dcterms:format "application/json" .
 
 pizza:Food a smo:ModelElement .
 pizza:Pizza a smo:ModelElement .
