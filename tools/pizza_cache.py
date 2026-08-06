@@ -5,6 +5,7 @@ import hashlib
 import json
 import sys
 import tempfile
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -38,7 +39,10 @@ def sha256_bytes(content: bytes) -> str:
 def fetch_upstream() -> bytes:
     request = urllib.request.Request(
         SOURCE_URL,
-        headers={"User-Agent": USER_AGENT, "Accept": "application/rdf+xml, application/xml;q=0.9, */*;q=0.1"},
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept": "application/rdf+xml, application/xml;q=0.9, */*;q=0.1",
+        },
     )
     with urllib.request.urlopen(request, timeout=60) as response:
         content = response.read()
