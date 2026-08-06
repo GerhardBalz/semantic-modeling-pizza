@@ -2,12 +2,6 @@ name: Refresh Pizza ontology cache
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - agent/cache-pizza-ontology
-    paths:
-      - tools/pizza_cache.py
-      - .github/workflows/refresh-pizza-cache.yml
 
 permissions:
   contents: write
@@ -17,7 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out branch
+      - name: Require a feature branch
+        if: github.ref_name == 'main'
+        run: |
+          echo "Run this workflow from a feature branch; direct updates to main are not allowed."
+          exit 1
+
+      - name: Check out selected branch
         uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
@@ -30,6 +30,9 @@ jobs:
       - name: Refresh cache from canonical source
         run: python tools/pizza_cache.py refresh
 
+      - name: Verify refreshed cache
+        run: python tools/pizza_cache.py verify
+
       - name: Commit refreshed cache
         run: |
           git config user.name "github-actions[bot]"
@@ -38,6 +41,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Cache is already current."
           else
-            git commit -m "Cache canonical Pizza ontology"
+            git commit -m "Refresh cached Pizza ontology"
             git push
           fi
