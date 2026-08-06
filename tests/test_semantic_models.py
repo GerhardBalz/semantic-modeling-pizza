@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+import json
 import unittest
+from hashlib import sha256
 from pathlib import Path
-from urllib.request import urlopen
 
-from rdflib import BNode, Graph, Namespace, RDF, URIRef
 from owlrl import DeductiveClosure, OWLRL_Semantics
 from pyshacl import validate
+from rdflib import BNode, Graph, Namespace, RDF, URIRef
+from rdflib.namespace import OWL
 
 ROOT = Path(__file__).resolve().parents[1]
 SMP = Namespace("https://github.com/GerhardBalz/semantic-modeling-pizza#")
 SMO = Namespace("https://github.com/GerhardBalz/semantic-modeling-ontology#")
 PIZZA = Namespace("http://www.co-ode.org/ontologies/pizza/pizza.owl#")
-PIZZA_SOURCE = "https://protege.stanford.edu/ontologies/pizza/pizza.owl"
+PIZZA_ONTOLOGY = URIRef("http://www.co-ode.org/ontologies/pizza")
+PIZZA_CACHE = ROOT / "source" / "cache" / "pizza.owl"
+PIZZA_MANIFEST = ROOT / "source" / "cache" / "pizza-manifest.json"
 
 
 def load_graph(*relative_paths: str) -> Graph:
@@ -46,6 +50,16 @@ class SemanticModelTests(unittest.TestCase):
         for path in sorted(ROOT.rglob("*.ttl")):
             with self.subTest(path=path.relative_to(ROOT)):
                 Graph().parse(path, format="turtle")
+
+    def test_cached_pizza_ontology_matches_manifest(self) -> None:
+        content = PIZZA_CACHE.read_bytes()
+        manifest = json.loads(PIZZA_MANIFEST.read_text(encoding="utf-8"))
+
+        self.assertEqual(sha256(content).hexdigest(), manifest["sha256"])
+        self.assertEqual(len(content), manifest["size_bytes"])
+
+        graph = Graph().parse(data=content, format="xml")
+        self.assertIn((PIZZA_ONTOLOGY, RDF.type, OWL.Ontology), graph)
 
     def test_model_descriptions_conform(self) -> None:
         data = load_graph(
@@ -105,9 +119,7 @@ class SemanticModelTests(unittest.TestCase):
         self.assertIn("decimal price", report)
 
     def test_owl_infers_spicy_pizza(self) -> None:
-        graph = Graph()
-        with urlopen(PIZZA_SOURCE, timeout=30) as response:
-            graph.parse(data=response.read(), format="xml")
+        graph = Graph().parse(PIZZA_CACHE, format="xml")
         graph.parse(ROOT / "data/example-menu.ttl", format="turtle")
 
         DeductiveClosure(OWLRL_Semantics).expand(graph)
@@ -125,10 +137,7 @@ class SemanticModelTests(unittest.TestCase):
             "contracts/find-suitable-pizzas.ttl",
         )
         query = (ROOT / "queries/trace-agent-lineage.rq").read_text(encoding="utf-8")
-        rows = {
-            (row.child, row.relation, row.parent)
-            for row in graph.query(query)
-        }
+        rows = {(row.child, row.relation, row.parent) for row in graph.query(query)}
 
         self.assertIn(
             (
@@ -142,7 +151,7 @@ class SemanticModelTests(unittest.TestCase):
             (
                 SMP.PizzaMenuSemanticModel,
                 SMO.isProjectionOf,
-                URIRef("http://www.co-ode.org/ontologies/pizza"),
+                PIZZA_ONTOLOGY,
             ),
             rows,
         )

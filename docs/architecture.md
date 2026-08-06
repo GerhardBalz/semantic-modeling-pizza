@@ -8,7 +8,7 @@ The Pizza Ontology is used because it is small, familiar, and expressive enough 
 
 The project does not replace, fork, or improve the Pizza Ontology itself. It uses the ontology as an external semantic foundation and investigates the model-management relationships that SMO can express around it.
 
-## 2. Source ontology
+## 2. Source ontology and cached representation
 
 The canonical Pizza Ontology is published at:
 
@@ -24,18 +24,35 @@ http://www.co-ode.org/ontologies/pizza
 
 Its embedded metadata identifies version 2.0 and the Creative Commons Attribution 3.0 license.
 
-The repository references the canonical ontology through [`source/pizza-import.ttl`](../source/pizza-import.ttl) rather than copying or modifying it.
+The repository keeps two distinct representations of the same ontology:
+
+```text
+Published representation
+    https://protege.stanford.edu/ontologies/pizza/pizza.owl
+
+Cached representation
+    source/cache/pizza.owl
+```
+
+The cached file is a byte-for-byte retrieved representation. It retains the original ontology IRI and version IRI and therefore does not create a replacement or forked ontology.
+
+[`source/cache/pizza-manifest.json`](../source/cache/pizza-manifest.json) records the canonical source URL, retrieval timestamp, SHA-256 hash, byte size, ontology IRI, version information, and license text. The cache can be verified without network access, while a separate scheduled check compares it with the current canonical source.
+
+[`source/pizza-import.ttl`](../source/pizza-import.ttl) continues to import the original ontology IRI. Runtime validation and inference use the local cached representation for reproducibility.
 
 ## 3. Experiment architecture
 
-The experiment separates six layers:
+The experiment separates seven layers:
 
 ```text
 External ontology
     Protégé Pizza Ontology
 
+Cached representation
+    Verified local copy of the canonical RDF/XML document
+
 Model description
-    SMO statements describing the ontology as a model
+    SMO statements describing the ontology and its representations
 
 Derived semantic model
     Pizza Menu Semantic Model as a purpose-specific projection
@@ -47,13 +64,15 @@ Operational artifact
     find_suitable_pizzas Agent Contract
 
 Verification
-    SHACL validation, OWL inference, and SPARQL lineage queries
+    SHA-256 checks, SHACL validation, OWL inference, and SPARQL lineage queries
 ```
 
 Conceptually:
 
 ```text
 Protégé Pizza Ontology
+        ↓ cached and verified as
+Local canonical representation
         ↓ described using
 Semantic Modeling Ontology
         ↓ projected as
@@ -64,7 +83,7 @@ Example menu data
 find_suitable_pizzas Agent Contract
 ```
 
-The derived model, runtime facts, and agent contract are repository-specific artifacts. They are not asserted to be part of the original Pizza Ontology.
+The cached document is a representation of the external ontology. The derived model, runtime facts, and agent contract are repository-specific artifacts and are not asserted to be part of the original Pizza Ontology.
 
 ## 4. Modeling levels
 
@@ -87,17 +106,49 @@ M0 — Runtime entities and facts
      its price and current availability
 ```
 
-The Pizza Ontology belongs to M1 because it is a concrete ontology expressed using OWL. Its classes such as `Pizza` and `PizzaTopping` are model elements. The menu items and pizza instances in [`data/example-menu.ttl`](../data/example-menu.ttl) belong to M0.
+The published and cached RDF/XML documents are representations of the M1 Pizza Ontology, not additional domain models. The menu items and pizza instances in [`data/example-menu.ttl`](../data/example-menu.ttl) belong to M0.
 
 ## 5. Artifact responsibilities
 
 ### `source/pizza-import.ttl`
 
-Points to the canonical Pizza Ontology and records its source and license without creating a replacement ontology identity.
+Imports the canonical Pizza Ontology using its original ontology IRI and records its published source and license.
+
+### `source/cache/pizza.owl`
+
+Contains the exact retrieved RDF/XML bytes used by automated tests and local tooling. It is not edited manually.
+
+### `source/cache/pizza-manifest.json`
+
+Records the cryptographic hash, size, retrieval time, source URL, ontology identity, version, and license metadata for the cached representation.
+
+### `tools/pizza_cache.py`
+
+Provides three operations:
+
+```text
+verify          verify local bytes and metadata against the manifest
+check-upstream  compare the canonical upstream bytes with the cached hash
+refresh         replace the cache and manifest when the upstream bytes change
+```
+
+### `.github/workflows/validate.yml`
+
+Verifies the cache without network access and then executes the semantic-model tests.
+
+### `.github/workflows/check-pizza-upstream.yml`
+
+Runs weekly and on demand. It downloads the canonical document and fails when its SHA-256 differs from the cached hash.
+
+### `.github/workflows/refresh-pizza-cache.yml`
+
+Refreshes and commits the cache when run from a feature branch. It explicitly refuses to update `main` directly.
 
 ### `models/pizza-model-description.ttl`
 
-Uses SMO to describe the external Pizza Ontology as a model, including its kind, languages, representation, source, version, and selected model elements.
+Uses SMO to describe the external Pizza Ontology as a model, including its kind, languages, source, version, selected model elements, published representation, cached representation, and cache-manifest artifact.
+
+The cached representation is linked to the published representation with `prov:specializationOf`.
 
 ### `examples/pizza-menu-semantic-model.ttl`
 
@@ -121,7 +172,7 @@ Traces the direct derivation edges from the agent contract through the semantic 
 
 ### `tests/test_semantic_models.py`
 
-Executes syntax, SHACL, OWL-inference, and SPARQL-lineage tests.
+Executes cache, syntax, SHACL, OWL-inference, and SPARQL-lineage tests. The OWL test reads the cached ontology and therefore does not depend on network availability.
 
 ## 6. Projection scope
 
@@ -198,7 +249,7 @@ SHACL validates declared graph structure. It does not replace OWL reasoning or o
 
 The example menu contains `smp:DiavolaPizza`, asserted as a `pizza:Pizza`, with a topping asserted as a `pizza:SpicyTopping`.
 
-The canonical ontology defines `pizza:SpicyPizza` as any pizza with at least one spicy topping. The test suite loads the canonical ontology, applies OWL RL reasoning, and verifies that this additional type is inferred:
+The cached canonical ontology defines `pizza:SpicyPizza` as any pizza with at least one spicy topping. The test suite loads [`source/cache/pizza.owl`](../source/cache/pizza.owl), applies OWL RL reasoning, and verifies that this additional type is inferred:
 
 ```text
 Asserted:
@@ -263,6 +314,7 @@ The current SMO vocabulary already supports:
 
 - identifying models and model kinds;
 - declaring modeling languages and representations;
+- representing both published and cached forms of one model;
 - relating a projection to its source model;
 - associating constraints;
 - relating an operational artifact to its source model;
@@ -274,22 +326,27 @@ The Pizza experiment exposes candidate gaps:
 2. **Competency questions** — SMO has no dedicated relationship connecting a model to the questions it is intended to answer.
 3. **Operational signatures** — SMO does not yet define operation names or semantic input and output concepts for contracts.
 4. **Evidence semantics** — recommendation evidence is represented only as a local concept; its provenance and explanation structure remain open.
+5. **Representation integrity** — the checksum remains in an external JSON manifest; the appropriate reusable RDF representation of cryptographic integrity remains open.
 
-The repository uses local `smp:` properties for these needs. They remain experimental until a second domain demonstrates that they are reusable.
+The repository uses local `smp:` properties for domain-specific needs and a JSON manifest for cache integrity. These choices remain experimental until a second domain demonstrates what should be generalized.
 
 ## 13. Design principles
 
 ### Preserve external identity
 
-The canonical Pizza Ontology keeps its original ontology IRI.
+The canonical Pizza Ontology keeps its original ontology IRI and version IRI in both published and cached representations.
 
-### Describe rather than duplicate
+### Cache without forking
 
-SMO statements describe the ontology and its role without reproducing its complete OWL metamodel.
+Caching records exact source bytes for reproducibility. It does not authorize semantic edits or mint a replacement ontology identity.
+
+### Verify locally, compare remotely
+
+Normal validation verifies the checked-in bytes against the manifest without network access. A separate scheduled workflow performs the unstable network comparison with the canonical source.
 
 ### Separate source, projection, and runtime facts
 
-The external ontology, purpose-specific semantic model, and current menu data are distinct artifacts with different lifecycles.
+The external ontology, its representations, the purpose-specific semantic model, and current menu data are distinct artifacts with different lifecycles.
 
 ### Demonstrate before generalizing
 
@@ -307,7 +364,10 @@ Operational artifacts must retain machine-readable links to their source semanti
 
 ```text
 .
-├── .github/workflows/validate.yml
+├── .github/workflows/
+│   ├── validate.yml
+│   ├── check-pizza-upstream.yml
+│   └── refresh-pizza-cache.yml
 ├── README.md
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -315,6 +375,11 @@ Operational artifacts must retain machine-readable links to their source semanti
 ├── requirements-dev.txt
 ├── docs/architecture.md
 ├── source/
+│   ├── pizza-import.ttl
+│   └── cache/
+│       ├── pizza.owl
+│       └── pizza-manifest.json
+├── tools/pizza_cache.py
 ├── models/
 ├── examples/
 ├── data/
@@ -331,17 +396,19 @@ The milestone is complete when:
 1. the projection states its purpose, included concepts, excluded concepts, and competency questions;
 2. concrete menu data is separate from model definitions;
 3. valid and invalid SHACL examples are executable;
-4. at least one OWL inference is demonstrated against the canonical ontology;
+4. at least one OWL inference is demonstrated against the verified cached ontology;
 5. one agent contract is derived from the semantic model;
 6. a SPARQL query traces the complete derivation chain;
-7. SMO gaps discovered by the experiment are documented without prematurely changing SMO.
+7. a cached source representation is protected by a cryptographic manifest and upstream-change check;
+8. SMO gaps discovered by the experiment are documented without prematurely changing SMO.
 
 ## 16. Open questions
 
 1. Should `answersQuestion` and `excludesElement` become reusable SMO concepts?
 2. Is the Pizza Menu Semantic Model better classified as a semantic model, semantic view, or both?
 3. Should a purpose-specific projection import the complete source ontology or materialize only selected axioms?
-4. How should immutable retrieved source representations be recorded for reproducible inference tests?
-5. Should agent inputs and outputs be model elements, contract parameters, or projections of domain concepts?
-6. How should recommendation evidence and provenance be modeled?
-7. Which next example best challenges the emerging pattern: Wine and Food, FIBO, or another non-food ontology?
+4. Should cryptographic integrity be represented using SPDX, another existing RDF vocabulary, or remain an artifact-level manifest concern?
+5. Should cached representations use `prov:specializationOf`, `prov:alternateOf`, or a more precise SMO relationship?
+6. Should agent inputs and outputs be model elements, contract parameters, or projections of domain concepts?
+7. How should recommendation evidence and provenance be modeled?
+8. Which next example best challenges the emerging pattern: Wine and Food, FIBO, or another non-food ontology?

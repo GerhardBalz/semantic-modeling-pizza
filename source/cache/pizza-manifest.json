@@ -1,0 +1,11 @@
+{
+  "license": "Creative Commons Attribution 3.0 (CC BY 3.0)",
+  "ontology_iri": "http://www.co-ode.org/ontologies/pizza",
+  "retrieved_at_utc": "2026-08-06T03:54:11+00:00",
+  "schema_version": 1,
+  "sha256": "f1af596252f2e2a9f2df85bc64a9384dcf88a558084c25add5ffedca163ba45a",
+  "size_bytes": 163301,
+  "source_url": "https://protege.stanford.edu/ontologies/pizza/pizza.owl",
+  "version_info": "2.0",
+  "version_iri": "http://www.co-ode.org/ontologies/pizza/2.0.0"
+}
