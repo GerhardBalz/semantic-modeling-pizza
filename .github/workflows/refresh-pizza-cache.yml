@@ -1,0 +1,43 @@
+name: Refresh Pizza ontology cache
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/cache-pizza-ontology
+    paths:
+      - tools/pizza_cache.py
+      - .github/workflows/refresh-pizza-cache.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Refresh cache from canonical source
+        run: python tools/pizza_cache.py refresh
+
+      - name: Commit refreshed cache
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/cache/pizza.owl source/cache/pizza-manifest.json
+          if git diff --cached --quiet; then
+            echo "Cache is already current."
+          else
+            git commit -m "Cache canonical Pizza ontology"
+            git push
+          fi
