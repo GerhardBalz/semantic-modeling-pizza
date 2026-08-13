@@ -1,23 +1,26 @@
 @prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
-@prefix smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#> .
+@prefix smo: <https://w3id.org/smo#> .
 @prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 
 <http://www.co-ode.org/ontologies/pizza>
-    a owl:Ontology, smo:Model ;
+    a owl:Ontology, smo:SemanticModel ;
     dcterms:title "Protégé Pizza Ontology"@en ;
     dcterms:description "An ontology about pizzas and their toppings, used by the Protégé and Manchester OWL tutorials."@en ;
     dcterms:source <https://protege.stanford.edu/ontologies/pizza/pizza.owl> ;
     dcterms:hasVersion <http://www.co-ode.org/ontologies/pizza/2.0.0> ;
     dcterms:license <https://creativecommons.org/licenses/by/3.0/> ;
-    smo:hasModelKind smo:OntologyModelKind ;
-    smo:usesLanguage smo:RDF, smo:RDFS, smo:OWL, smo:SKOS ;
-    smo:hasRepresentation
+    dcterms:conformsTo
+        <https://www.w3.org/TR/rdf11-concepts/>,
+        <https://www.w3.org/TR/rdf-schema/>,
+        <https://www.w3.org/TR/owl2-overview/>,
+        <https://www.w3.org/TR/skos-reference/> ;
+    dcterms:hasFormat
         smp:CanonicalPizzaOntologyDocument,
         smp:CachedPizzaOntologyDocument ;
-    smo:containsElement
+    dcterms:hasPart
         pizza:Food,
         pizza:Pizza,
         pizza:PizzaBase,
@@ -38,13 +41,11 @@
         pizza:hasSpiciness .
 
 smp:CanonicalPizzaOntologyDocument
-    a smo:ModelRepresentation ;
     dcterms:title "Canonical Pizza Ontology RDF/XML document"@en ;
     dcterms:identifier "https://protege.stanford.edu/ontologies/pizza/pizza.owl" ;
     dcterms:format "application/rdf+xml" .
 
 smp:CachedPizzaOntologyDocument
-    a smo:ModelRepresentation ;
     dcterms:title "Cached Pizza Ontology RDF/XML document"@en ;
     dcterms:description "A byte-for-byte cached representation used for reproducible validation and inference without changing the ontology identity."@en ;
     dcterms:identifier "source/cache/pizza.owl" ;
@@ -53,26 +54,6 @@ smp:CachedPizzaOntologyDocument
     prov:specializationOf smp:CanonicalPizzaOntologyDocument .
 
 smp:PizzaCacheManifest
-    a smo:Artifact ;
     dcterms:title "Pizza ontology cache manifest"@en ;
     dcterms:identifier "source/cache/pizza-manifest.json" ;
     dcterms:format "application/json" .
-
-pizza:Food a smo:ModelElement .
-pizza:Pizza a smo:ModelElement .
-pizza:PizzaBase a smo:ModelElement .
-pizza:PizzaTopping a smo:ModelElement .
-pizza:NamedPizza a smo:ModelElement .
-pizza:Margherita a smo:ModelElement .
-pizza:VegetarianPizza a smo:ModelElement .
-pizza:SpicyPizza a smo:ModelElement .
-pizza:SpicyTopping a smo:ModelElement .
-pizza:Spiciness a smo:ModelElement .
-pizza:MozzarellaTopping a smo:ModelElement .
-pizza:TomatoTopping a smo:ModelElement .
-pizza:Country a smo:ModelElement .
-pizza:IceCream a smo:ModelElement .
-pizza:hasIngredient a smo:ModelElement .
-pizza:hasBase a smo:ModelElement .
-pizza:hasTopping a smo:ModelElement .
-pizza:hasSpiciness a smo:ModelElement .
