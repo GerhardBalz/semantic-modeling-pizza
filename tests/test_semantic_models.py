@@ -12,11 +12,13 @@ from rdflib.namespace import OWL
 
 ROOT = Path(__file__).resolve().parents[1]
 SMP = Namespace("https://github.com/GerhardBalz/semantic-modeling-pizza#")
-SMO = Namespace("https://github.com/GerhardBalz/semantic-modeling-ontology#")
+SMO = Namespace("https://w3id.org/smo#")
+PROV = Namespace("http://www.w3.org/ns/prov#")
 PIZZA = Namespace("http://www.co-ode.org/ontologies/pizza/pizza.owl#")
 PIZZA_ONTOLOGY = URIRef("http://www.co-ode.org/ontologies/pizza")
 PIZZA_CACHE = ROOT / "source" / "cache" / "pizza.owl"
 PIZZA_MANIFEST = ROOT / "source" / "cache" / "pizza-manifest.json"
+OLD_SMO_NAMESPACE = "https://github.com/GerhardBalz/semantic-modeling-ontology#"
 
 
 def load_graph(*relative_paths: str) -> Graph:
@@ -76,7 +78,7 @@ class SemanticModelTests(unittest.TestCase):
         )
         self.assertTrue(conforms, report)
 
-    def test_projection_without_source_fails(self) -> None:
+    def test_semantic_model_without_source_fails(self) -> None:
         data = load_graph("tests/invalid/pizza-menu-missing-source.ttl")
         all_shapes = load_graph("shapes/pizza-model-shapes.ttl")
         shapes = extract_shape(all_shapes, SMP.PizzaMenuSemanticModelShape)
@@ -87,7 +89,7 @@ class SemanticModelTests(unittest.TestCase):
             advanced=True,
         )
         self.assertFalse(conforms)
-        self.assertIn("single source projection", report)
+        self.assertIn("single semantic source", report)
 
     def test_example_menu_conforms(self) -> None:
         data = load_graph(
@@ -142,7 +144,7 @@ class SemanticModelTests(unittest.TestCase):
         self.assertIn(
             (
                 SMP.FindSuitablePizzasContract,
-                SMO.isGeneratedFrom,
+                PROV.wasDerivedFrom,
                 SMP.PizzaMenuSemanticModel,
             ),
             rows,
@@ -150,11 +152,26 @@ class SemanticModelTests(unittest.TestCase):
         self.assertIn(
             (
                 SMP.PizzaMenuSemanticModel,
-                SMO.isProjectionOf,
+                PROV.wasDerivedFrom,
                 PIZZA_ONTOLOGY,
             ),
             rows,
         )
+
+    def test_old_smo_namespace_is_absent_from_current_turtle(self) -> None:
+        for path in sorted(ROOT.rglob("*.ttl")):
+            with self.subTest(path=path.relative_to(ROOT)):
+                self.assertNotIn(OLD_SMO_NAMESPACE, path.read_text(encoding="utf-8"))
+
+    def test_only_governed_smo_terms_are_used(self) -> None:
+        allowed = {SMO.SemanticModel, SMO.ImplementationProjection}
+        graph = Graph()
+        for path in sorted(ROOT.rglob("*.ttl")):
+            graph.parse(path, format="turtle")
+        for triple in graph:
+            for term in triple:
+                if isinstance(term, URIRef) and str(term).startswith(str(SMO)):
+                    self.assertIn(term, allowed)
 
 
 if __name__ == "__main__":
