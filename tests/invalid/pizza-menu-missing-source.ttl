@@ -1,5 +1,6 @@
 @prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
 @prefix smo: <https://w3id.org/smo#> .
+@prefix mod: <https://w3id.org/mod#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
 smp:PizzaMenuSemanticModel
@@ -9,7 +10,7 @@ smp:PizzaMenuSemanticModel
     dcterms:conformsTo smp:PizzaMenuSemanticModelShape ;
     dcterms:hasFormat smp:BrokenRepresentation ;
     dcterms:hasPart smp:MenuItem ;
-    smp:answersQuestion
+    mod:competencyQuestion
         "Question one?"@en,
         "Question two?"@en,
         "Question three?"@en ;

@@ -1,5 +1,6 @@
 @prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
 @prefix smo: <https://w3id.org/smo#> .
+@prefix mod: <https://w3id.org/mod#> .
 @prefix pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -15,7 +16,7 @@ smp:PizzaMenuSemanticModel
     prov:wasDerivedFrom <http://www.co-ode.org/ontologies/pizza> ;
     dcterms:conformsTo smp:PizzaMenuSemanticModelShape, smp:MenuItemShape ;
     dcterms:hasFormat smp:PizzaMenuSemanticModelTurtle ;
-    smp:answersQuestion
+    mod:competencyQuestion
         "Which pizzas are currently offered on the menu?"@en,
         "Which toppings are associated with a pizza?"@en,
         "Which offered pizzas satisfy a dietary or spiciness preference?"@en,
@@ -45,11 +46,6 @@ smp:PizzaMenuSemanticModelTurtle
     dcterms:title "Pizza Menu Semantic Model — Turtle representation"@en ;
     dcterms:identifier "examples/pizza-menu-semantic-model.ttl" ;
     dcterms:format "text/turtle" .
-
-smp:answersQuestion
-    a owl:AnnotationProperty ;
-    rdfs:label "answers question"@en ;
-    rdfs:comment "Links a semantic model to a competency question it is intended to answer. Experimental local property."@en .
 
 smp:excludesElement
     a owl:ObjectProperty ;
