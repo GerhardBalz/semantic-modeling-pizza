@@ -1,15 +1,11 @@
 PREFIX smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#>
-PREFIX smo: <https://github.com/GerhardBalz/semantic-modeling-ontology#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT ?child ?relation ?parent
 WHERE {
     VALUES ?root { smp:FindSuitablePizzasContract }
-    ?root (smo:isGeneratedFrom|smo:isProjectionOf|smo:isDerivedFrom)* ?child .
-    ?child ?relation ?parent .
-    VALUES ?relation {
-        smo:isGeneratedFrom
-        smo:isProjectionOf
-        smo:isDerivedFrom
-    }
+    ?root prov:wasDerivedFrom* ?child .
+    ?child prov:wasDerivedFrom ?parent .
+    BIND(prov:wasDerivedFrom AS ?relation)
 }
 ORDER BY ?child ?relation ?parent
