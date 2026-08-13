@@ -1,5 +1,6 @@
 @prefix smp: <https://github.com/GerhardBalz/semantic-modeling-pizza#> .
 @prefix smo: <https://w3id.org/smo#> .
+@prefix mod: <https://w3id.org/mod#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -8,108 +9,30 @@ smp:PizzaOntologyDescriptionShape
     a sh:NodeShape ;
     sh:targetNode <http://www.co-ode.org/ontologies/pizza> ;
     sh:class smo:SemanticModel ;
-    sh:property [
-        sh:path dcterms:title ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Ontology semantic-model description must have a title."@en
-    ] ;
-    sh:property [
-        sh:path dcterms:source ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Ontology semantic-model description must identify its external source."@en
-    ] ;
-    sh:property [
-        sh:path dcterms:hasFormat ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Ontology semantic-model description must identify a representation."@en
-    ] .
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:message "The Pizza Ontology semantic-model description must have a title."@en ] ;
+    sh:property [ sh:path dcterms:source ; sh:minCount 1 ; sh:message "The Pizza Ontology semantic-model description must identify its external source."@en ] ;
+    sh:property [ sh:path dcterms:hasFormat ; sh:minCount 1 ; sh:message "The Pizza Ontology semantic-model description must identify a representation."@en ] .
 
 smp:PizzaMenuSemanticModelShape
     a sh:NodeShape ;
     sh:targetNode smp:PizzaMenuSemanticModel ;
     sh:class smo:SemanticModel ;
-    sh:property [
-        sh:path dcterms:title ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Menu Semantic Model must have a title."@en
-    ] ;
-    sh:property [
-        sh:path dcterms:description ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Menu Semantic Model must state its purpose."@en
-    ] ;
-    sh:property [
-        sh:path prov:wasDerivedFrom ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:hasValue <http://www.co-ode.org/ontologies/pizza> ;
-        sh:message "The Pizza Menu Semantic Model must identify the Pizza Ontology as its single semantic source."@en
-    ] ;
-    sh:property [
-        sh:path dcterms:conformsTo ;
-        sh:minCount 1 ;
-        sh:hasValue smp:PizzaMenuSemanticModelShape ;
-        sh:message "The Pizza Menu Semantic Model must identify its model-metadata SHACL constraint."@en
-    ] ;
-    sh:property [
-        sh:path dcterms:hasFormat ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Menu Semantic Model must identify a representation."@en
-    ] ;
-    sh:property [
-        sh:path dcterms:hasPart ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Menu Semantic Model must select at least one model element."@en
-    ] ;
-    sh:property [
-        sh:path smp:answersQuestion ;
-        sh:minCount 3 ;
-        sh:message "The Pizza Menu Semantic Model must state at least three competency questions."@en
-    ] ;
-    sh:property [
-        sh:path smp:excludesElement ;
-        sh:minCount 1 ;
-        sh:message "The Pizza Menu Semantic Model must make at least one deliberate exclusion explicit."@en
-    ] .
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:message "The Pizza Menu Semantic Model must have a title."@en ] ;
+    sh:property [ sh:path dcterms:description ; sh:minCount 1 ; sh:message "The Pizza Menu Semantic Model must state its purpose."@en ] ;
+    sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue <http://www.co-ode.org/ontologies/pizza> ; sh:message "The Pizza Menu Semantic Model must identify the Pizza Ontology as its single semantic source."@en ] ;
+    sh:property [ sh:path dcterms:conformsTo ; sh:minCount 1 ; sh:hasValue smp:PizzaMenuSemanticModelShape ; sh:message "The Pizza Menu Semantic Model must identify its model-metadata SHACL constraint."@en ] ;
+    sh:property [ sh:path dcterms:hasFormat ; sh:minCount 1 ; sh:message "The Pizza Menu Semantic Model must identify a representation."@en ] ;
+    sh:property [ sh:path dcterms:hasPart ; sh:minCount 1 ; sh:message "The Pizza Menu Semantic Model must select at least one model element."@en ] ;
+    sh:property [ sh:path mod:competencyQuestion ; sh:minCount 3 ; sh:message "The Pizza Menu Semantic Model must state at least three competency questions using MOD."@en ] ;
+    sh:property [ sh:path smp:excludesElement ; sh:minCount 1 ; sh:message "The Pizza Menu Semantic Model must make at least one deliberate exclusion explicit."@en ] .
 
 smp:FindSuitablePizzasContractShape
     a sh:NodeShape ;
     sh:targetNode smp:FindSuitablePizzasContract ;
     sh:class smp:AgentContract ;
-    sh:property [
-        sh:path dcterms:title ;
-        sh:minCount 1 ;
-        sh:message "The agent contract must have a title."@en
-    ] ;
-    sh:property [
-        sh:path prov:wasDerivedFrom ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:hasValue smp:PizzaMenuSemanticModel ;
-        sh:message "The agent contract must identify the Pizza Menu Semantic Model as its source."@en
-    ] ;
-    sh:property [
-        sh:path smp:appliesInContext ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class smp:RuntimeContext ;
-        sh:message "The agent contract must identify one runtime context."@en
-    ] ;
-    sh:property [
-        sh:path smp:operationName ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:message "The agent contract must have one operation name."@en
-    ] ;
-    sh:property [
-        sh:path smp:inputConcept ;
-        sh:minCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:message "The agent contract must identify at least one semantic input concept."@en
-    ] ;
-    sh:property [
-        sh:path smp:outputConcept ;
-        sh:minCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:message "The agent contract must identify at least one semantic output concept."@en
-    ] .
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:message "The agent contract must have a title."@en ] ;
+    sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue smp:PizzaMenuSemanticModel ; sh:message "The agent contract must identify the Pizza Menu Semantic Model as its source."@en ] ;
+    sh:property [ sh:path smp:appliesInContext ; sh:minCount 1 ; sh:maxCount 1 ; sh:class smp:RuntimeContext ; sh:message "The agent contract must identify one runtime context."@en ] ;
+    sh:property [ sh:path smp:operationName ; sh:minCount 1 ; sh:maxCount 1 ; sh:message "The agent contract must have one operation name."@en ] ;
+    sh:property [ sh:path smp:inputConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:message "The agent contract must identify at least one semantic input concept."@en ] ;
+    sh:property [ sh:path smp:outputConcept ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:message "The agent contract must identify at least one semantic output concept."@en ] .

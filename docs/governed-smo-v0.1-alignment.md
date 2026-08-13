@@ -22,9 +22,13 @@ In the current Pizza example:
 - the historical Pizza ontology and the Pizza Menu Semantic Model are `smo:SemanticModel` instances;
 - no artifact is classified as `smo:ImplementationProjection` merely because it is derived;
 - DCTERMS and PROV-O express source, derivation, representation/format, conformance, and part relationships where sufficient;
-- agent-contract, runtime-context, competency-question, exclusion, and operation-signature concepts remain explicitly local `smp:` experimental vocabulary;
+- textual competency questions use the established MOD `mod:competencyQuestion` property following SMO #22 / PR #23;
+- the earlier `smp:answersQuestion` property is preserved only as historical experimental evidence and is not used in current Turtle artifacts;
+- agent-contract, runtime-context, exclusion, and operation-signature concepts remain explicitly local `smp:` experimental vocabulary;
 - historical Pizza ontology/version/entity IRIs remain unchanged.
 
-Tests reject the old GitHub SMO namespace in current Turtle artifacts and reject governed-SMO IRIs other than the published v0.1 classes.
+No SMO↔MOD class equivalence or subclass relation is asserted merely to reuse MOD metadata.
 
-This cleanup preserves the experimental evidence without promoting it into SMO. Any future reusable term requires independent cross-domain evidence through SKE before an SMO change is proposed.
+Tests reject the old GitHub SMO namespace, unpublished governed-SMO terms, and reintroduction of the superseded local textual competency-question relation.
+
+This cleanup preserves the experimental evidence without promoting it into SMO. Any future reusable term still requires independent cross-domain evidence through SKE before an SMO change is proposed.

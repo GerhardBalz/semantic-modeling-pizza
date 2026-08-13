@@ -13,12 +13,14 @@ from rdflib.namespace import OWL
 ROOT = Path(__file__).resolve().parents[1]
 SMP = Namespace("https://github.com/GerhardBalz/semantic-modeling-pizza#")
 SMO = Namespace("https://w3id.org/smo#")
+MOD = Namespace("https://w3id.org/mod#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 PIZZA = Namespace("http://www.co-ode.org/ontologies/pizza/pizza.owl#")
 PIZZA_ONTOLOGY = URIRef("http://www.co-ode.org/ontologies/pizza")
 PIZZA_CACHE = ROOT / "source" / "cache" / "pizza.owl"
 PIZZA_MANIFEST = ROOT / "source" / "cache" / "pizza-manifest.json"
 OLD_SMO_NAMESPACE = "https://github.com/GerhardBalz/semantic-modeling-ontology#"
+OLD_COMPETENCY_RELATION = str(SMP.answersQuestion)
 
 
 def load_graph(*relative_paths: str) -> Graph:
@@ -157,6 +159,17 @@ class SemanticModelTests(unittest.TestCase):
             ),
             rows,
         )
+
+    def test_competency_questions_use_mod(self) -> None:
+        graph = load_graph("examples/pizza-menu-semantic-model.ttl")
+        questions = set(graph.objects(SMP.PizzaMenuSemanticModel, MOD.competencyQuestion))
+        self.assertEqual(len(questions), 4)
+        self.assertNotIn((SMP.PizzaMenuSemanticModel, SMP.answersQuestion, None), graph)
+
+    def test_old_competency_relation_is_absent_from_current_turtle(self) -> None:
+        for path in sorted(ROOT.rglob("*.ttl")):
+            with self.subTest(path=path.relative_to(ROOT)):
+                self.assertNotIn(OLD_COMPETENCY_RELATION, path.read_text(encoding="utf-8"))
 
     def test_old_smo_namespace_is_absent_from_current_turtle(self) -> None:
         for path in sorted(ROOT.rglob("*.ttl")):
