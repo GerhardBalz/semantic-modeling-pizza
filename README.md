@@ -1,8 +1,23 @@
 # Semantic Modeling Pizza
 
-An exploration of the Protégé Pizza Ontology using the Semantic Modeling Ontology, including semantic models, constraints, projections, runtime data, inference, and operational artifacts.
+A Semantic Knowledge Engineering (SKE) reference example that applies the Semantic Modeling Ontology (SMO) to the Pizza domain while keeping semantic models, implementation projections, runtime data, validation/inference evidence, and operational artifacts distinct.
 
-> **Status:** Exploratory. The current milestone tests whether the initial Semantic Modeling Ontology can support a traceable path from an external OWL ontology to a purpose-specific semantic model and agent contract.
+> **Status:** Working reference example. The repository remains private deliberately while its reference-example baseline and sibling Wine/Food comparison are still being established. Visibility is a governance choice, not a statement about semantic maturity.
+
+## Initiative role
+
+This repository is the **Semantic Modeling Pizza reference example** within the broader SKE initiative.
+
+Related repositories have deliberately different responsibilities:
+
+- [Semantic Knowledge Engineering](https://github.com/GerhardBalz/semantic-knowledge-engineering) owns initiative architecture, cross-repository governance, conventions, sequencing, and the repository map.
+- [Semantic Modeling Ontology](https://github.com/GerhardBalz/semantic-modeling-ontology) owns reusable semantic-modeling vocabulary such as `smo:SemanticModel` and `smo:ImplementationProjection`.
+- [Pizza Ontology](https://github.com/GerhardBalz/pizza-ontology) preserves and engineers around the historical Pizza Ontology and acts as a broader preservation/reference proving ground.
+- [Semantic Modeling Wine/Food](https://github.com/GerhardBalz/semantic-modeling-wine-food) is the sibling semantic-modeling reference example and is currently bootstrap-pending.
+
+`semantic-modeling-pizza` does **not** own the historical Pizza ontology, the `co-ode.org` namespace, SKE initiative governance, or reusable SMO vocabulary. It owns only the repository-authored reference-example artifacts and the evidence produced by applying SMO to this domain.
+
+See [`docs/initiative-role.md`](docs/initiative-role.md) for the detailed ownership and escalation boundaries.
 
 ## Purpose
 
@@ -10,11 +25,12 @@ The project keeps the following concerns separate:
 
 1. the external Pizza Ontology and its original identity;
 2. a verified cached representation of the canonical ontology;
-3. Semantic Modeling Ontology statements that describe the ontology as a model;
+3. SMO statements describing the ontology as a semantic model;
 4. a purpose-specific Pizza Menu Semantic Model;
-5. concrete runtime menu data;
-6. SHACL validation and OWL inference tests;
-7. an operational agent contract derived from the semantic model.
+5. implementation-facing projections where introduced and justified;
+6. concrete runtime menu data;
+7. SHACL validation and OWL inference evidence;
+8. an operational agent contract derived from the semantic model.
 
 The canonical Pizza Ontology retains its published ontology IRI. The repository cache is a byte-for-byte retrieved representation used for reproducible, offline validation and inference—not a fork or replacement ontology.
 
@@ -30,11 +46,13 @@ Semantic Modeling Ontology
 Pizza Menu Semantic Model
         ↓ applied to
 Example menu data
+        ↓ verified by
+SHACL + OWL inference + SPARQL lineage evidence
         ↓ operationalized as
 find_suitable_pizzas Agent Contract
 ```
 
-Cross-cutting validation and traceability are provided by SHA-256 verification, SHACL shapes, OWL reasoning tests, and SPARQL lineage queries.
+The chain is traceable but the layers are not interchangeable: a semantic model is not runtime data; a projection is not automatically a semantic model; validation or inference evidence is not an implementation projection; and an agent contract is an operational artifact rather than domain semantics.
 
 ## Repository structure
 
@@ -45,12 +63,14 @@ Cross-cutting validation and traceability are provided by SHA-256 verification, 
 │   ├── check-pizza-upstream.yml
 │   └── refresh-pizza-cache.yml
 ├── README.md
+├── BACKLOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE
 ├── NOTICE.md
 ├── requirements-dev.txt
 ├── docs/
-│   └── architecture.md
+│   ├── architecture.md
+│   └── initiative-role.md
 ├── source/
 │   ├── README.md
 │   ├── pizza-import.ttl
@@ -117,9 +137,13 @@ python -m unittest discover -s tests -v
 
 The tests parse every Turtle artifact, verify the cached ontology and manifest, execute positive and negative SHACL cases, demonstrate an OWL inference using the local cache, and run the SPARQL lineage query.
 
-## Architecture
+## Architecture and reusable findings
 
-The source-representation boundary, projection scope, runtime-data boundary, inference example, agent contract, SMO gaps, and open questions are maintained in [`docs/architecture.md`](docs/architecture.md).
+The source-representation boundary, semantic-model scope, runtime-data boundary, inference example, agent contract, SMO gaps, and open questions are maintained in [`docs/architecture.md`](docs/architecture.md).
+
+Reusable findings are not silently promoted into SMO or SKE. This repository records the evidence locally first; cross-example governance findings belong in SKE, while genuinely reusable semantic-modeling vocabulary candidates belong in the SMO backlog. The sibling Wine/Food example is expected to provide the next comparison point before generalizing Pizza-specific experimental terms.
+
+Repository-local follow-up work is maintained in [`BACKLOG.md`](BACKLOG.md).
 
 ## Contributing
 
