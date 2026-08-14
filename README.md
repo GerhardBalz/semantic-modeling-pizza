@@ -2,7 +2,7 @@
 
 A Semantic Knowledge Engineering (SKE) reference example that applies the Semantic Modeling Ontology (SMO) to the Pizza domain while keeping semantic models, implementation projections, runtime data, validation/inference evidence, and operational artifacts distinct.
 
-> **Status:** Public-readiness baseline complete. Repository visibility is governed explicitly through SKE #29; visibility is a publication/governance choice, not a statement about semantic maturity.
+> **Status:** Public reference-example baseline complete. The repository is public following the completed SKE #29 publication decision. Public visibility is a publication/governance state; it does not transfer authority over the historical Pizza namespace or imply semantic maturity beyond the evidence in this repository.
 
 ## Initiative role
 
@@ -133,7 +133,7 @@ python -m unittest discover -s tests -v
 
 Reusable findings are not silently promoted. The completed Pizza ↔ Wine/Food evidence cycle is governed through SKE; SMO #22 concluded that competency questions should reuse MOD rather than add new SMO vocabulary.
 
-Repository-local follow-up work is maintained in [`BACKLOG.md`](BACKLOG.md). Public visibility is decided separately through SKE #29 and must not be interpreted as authority over the historical Pizza namespace or as approval of the separate Pizza preservation/reference W3ID proposal in Pizza #72.
+Repository-local follow-up work is maintained in [`BACKLOG.md`](BACKLOG.md). The repository is public following completed SKE #29. That publication decision does not imply authority over the historical Pizza namespace or approval of the separate Pizza preservation/reference W3ID proposal in Pizza #72.
 
 ## Contributing
 
